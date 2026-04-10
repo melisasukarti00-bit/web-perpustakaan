@@ -9,11 +9,18 @@ class Buku extends Model
     protected $table = 'buku';
 
     protected $fillable = [
+        
         'judul',
+        'stok',
+        'tahun',
         'pengarang',
         'penerbit',
-        'tahun',
-        'stok',
-        'cover'
+        'cover',
     ];
+    public function peminjaman()
+{
+    return $this->hasMany(Peminjaman::class);
+}
+
+
 }

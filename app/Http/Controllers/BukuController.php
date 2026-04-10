@@ -21,17 +21,20 @@ class BukuController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'judul' => 'required',
-            'pengarang' => 'required',
-            'penerbit' => 'required',
-            'tahun' => 'required|numeric',
-            'stok' => 'required|numeric',
+            'judul' => 'required|string|max:255',
+            'pengarang' => 'required|string|max:255',
+            'penerbit' => 'required|string|max:255',
+            'tahun' => 'required|integer|min:0',
+            'stok' => 'required|integer|min:0',
             'cover' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+        ], [
+            'stok.min' => 'Stok buku tidak boleh negatif',
+            'tahun.min' => 'Tahun terbit tidak boleh negatif'
         ]);
 
-        $data = $request->all();
+        $data = $request->only(['judul', 'pengarang', 'penerbit', 'tahun', 'stok']);
 
-        // upload gambar
+        // Upload cover jika ada
         if ($request->hasFile('cover')) {
             $data['cover'] = $request->file('cover')->store('cover', 'public');
         }
@@ -53,16 +56,20 @@ class BukuController extends Controller
         $buku = Buku::findOrFail($id);
 
         $request->validate([
-            'judul' => 'required',
-            'pengarang' => 'required',
-            'penerbit' => 'required',
-            'tahun' => 'required|numeric',
-            'stok' => 'required|numeric',
+            'judul' => 'required|string|max:255',
+            'pengarang' => 'required|string|max:255',
+            'penerbit' => 'required|string|max:255',
+            'tahun' => 'required|integer|min:0',
+            'stok' => 'required|integer|min:0',
             'cover' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+        ], [
+            'stok.min' => 'Stok buku tidak boleh negatif',
+            'tahun.min' => 'Tahun terbit tidak boleh negatif'
         ]);
 
-        $data = $request->all();
+        $data = $request->only(['judul', 'pengarang', 'penerbit', 'tahun', 'stok']);
 
+        // Upload cover jika ada
         if ($request->hasFile('cover')) {
             $data['cover'] = $request->file('cover')->store('cover', 'public');
         }

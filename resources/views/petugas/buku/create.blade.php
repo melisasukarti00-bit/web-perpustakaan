@@ -44,7 +44,6 @@ label {
     font-size: 14px;
 }
 
-/* INPUT */
 input {
     width: 100%;
     padding: 10px;
@@ -58,7 +57,6 @@ input:focus {
     box-shadow: 0 0 5px rgba(77,163,255,0.3);
 }
 
-/* FILE */
 .file-box {
     border: 2px dashed #ccc;
     padding: 15px;
@@ -71,7 +69,6 @@ input:focus {
     background: #f9fbff;
 }
 
-/* BUTTON */
 .btn {
     padding: 10px 18px;
     border-radius: 8px;
@@ -92,14 +89,12 @@ input:focus {
     background: #3b8eea;
 }
 
-/* ACTION */
 .form-action {
     margin-top: 20px;
     text-align: right;
 }
 </style>
 
-<!-- BREADCRUMB -->
 <div class="breadcrumb">
     <strong>Tambah Buku</strong>
 </div>
@@ -108,7 +103,7 @@ input:focus {
 
     <div class="title">📚 Tambah Buku</div>
 
-    <form action="{{ route('petugas.buku.store') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('petugas.buku.store') }}" method="POST" enctype="multipart/form-data" id="bukuForm">
         @csrf
 
         <div class="form-grid">
@@ -118,7 +113,7 @@ input:focus {
 
                 <div class="form-group">
                     <label>Judul Buku</label>
-                    <input type="text" name="judul" value="{{ old('judul') }}">
+                    <input type="text" name="judul" value="{{ old('judul') }}" required>
                     @error('judul')
                         <small style="color:red">{{ $message }}</small>
                     @enderror
@@ -126,7 +121,7 @@ input:focus {
 
                 <div class="form-group">
                     <label>Pengarang</label>
-                    <input type="text" name="pengarang" value="{{ old('pengarang') }}">
+                    <input type="text" name="pengarang" value="{{ old('pengarang') }}" required>
                     @error('pengarang')
                         <small style="color:red">{{ $message }}</small>
                     @enderror
@@ -134,7 +129,7 @@ input:focus {
 
                 <div class="form-group">
                     <label>Penerbit</label>
-                    <input type="text" name="penerbit" value="{{ old('penerbit') }}">
+                    <input type="text" name="penerbit" value="{{ old('penerbit') }}" required>
                     @error('penerbit')
                         <small style="color:red">{{ $message }}</small>
                     @enderror
@@ -147,7 +142,8 @@ input:focus {
 
                 <div class="form-group">
                     <label>Tahun Terbit</label>
-                    <input type="number" name="tahun" value="{{ old('tahun') }}">
+                    <input type="number" id="tahun" name="tahun" value="{{ old('tahun') }}" min="0" required>
+                    <small id="tahunError" style="color:red; display:none;">Tahun terbit tidak boleh negatif</small>
                     @error('tahun')
                         <small style="color:red">{{ $message }}</small>
                     @enderror
@@ -155,7 +151,8 @@ input:focus {
 
                 <div class="form-group">
                     <label>Stok Buku</label>
-                    <input type="number" name="stok" value="{{ old('stok') }}">
+                    <input type="number" id="stok" name="stok" value="{{ old('stok') }}" min="0" required>
+                    <small id="stokError" style="color:red; display:none;">Stok buku tidak boleh negatif</small>
                     @error('stok')
                         <small style="color:red">{{ $message }}</small>
                     @enderror
@@ -184,5 +181,39 @@ input:focus {
     </form>
 
 </div>
+
+<script>
+const stokInput = document.getElementById('stok');
+const tahunInput = document.getElementById('tahun');
+const stokError = document.getElementById('stokError');
+const tahunError = document.getElementById('tahunError');
+
+function validateInput(input, errorElem){
+    if(parseInt(input.value) < 0){
+        errorElem.style.display = 'block';
+        input.value = 0; // reset langsung ke 0
+    } else {
+        errorElem.style.display = 'none';
+    }
+}
+
+// Live check saat user mengetik
+stokInput.addEventListener('input', () => validateInput(stokInput, stokError));
+tahunInput.addEventListener('input', () => validateInput(tahunInput, tahunError));
+
+// Final check saat submit
+document.getElementById('bukuForm').addEventListener('submit', function(e){
+    if(parseInt(stokInput.value) < 0){
+        alert('Stok buku tidak boleh negatif!');
+        e.preventDefault();
+        return false;
+    }
+    if(parseInt(tahunInput.value) < 0){
+        alert('Tahun terbit tidak boleh negatif!');
+        e.preventDefault();
+        return false;
+    }
+});
+</script>
 
 @endsection

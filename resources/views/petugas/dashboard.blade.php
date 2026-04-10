@@ -80,7 +80,6 @@ th {
 .success { background: #d4edda; color: #28a745; }
 .warning { background: #fff3cd; color: #ffc107; }
 .danger { background: #f8d7da; color: #dc3545; }
-
 </style>
 
 <div class="dashboard-title">Dashboard</div>
@@ -90,22 +89,22 @@ th {
 <div class="card-container">
     <div class="card">
         <h4>Total Buku</h4>
-        <h2>5</h2>
+        <h2>{{ $totalBuku }}</h2>
     </div>
 
     <div class="card">
         <h4>Total Anggota</h4>
-        <h2>2</h2>
+        <h2>{{ $totalAnggota }}</h2>
     </div>
 
     <div class="card">
         <h4>Buku Dipinjam</h4>
-        <h2>3</h2>
+        <h2>{{ $bukuDipinjam }}</h2>
     </div>
 
     <div class="card">
         <h4>Buku Terlambat</h4>
-        <h2>2</h2>
+        <h2>{{ $bukuTerlambat }}</h2>
     </div>
 </div>
 
@@ -126,32 +125,30 @@ th {
         </thead>
 
         <tbody>
+            @forelse ($laporan as $index => $item)
             <tr>
-                <td>1</td>
-                <td>Melisandra</td>
-                <td>Laskar Pelangi</td>
-                <td>12 Feb 2026</td>
-                <td>15 Feb 2026</td>
-                <td><span class="status success">Sudah Kembali</span></td>
+                <td>{{ $index + 1 }}</td>
+                <td>{{ $item->user->name ?? '-' }}</td>
+                <td>{{ $item->buku->judul ?? '-' }}</td>
+                <td>{{ \Carbon\Carbon::parse($item->tanggal_pinjam)->format('d M Y') }}</td>
+                <td>{{ \Carbon\Carbon::parse($item->jatuh_tempo)->format('d M Y') }}</td>
+                <td>
+                    @if ($item->status === 'returned')
+                        <span class="status success">Sudah Kembali</span>
+                    @elseif ($item->status === 'approved' && \Carbon\Carbon::parse($item->jatuh_tempo)->isPast())
+                        <span class="status danger">Terlambat</span>
+                    @elseif ($item->status === 'approved')
+                        <span class="status warning">Dipinjam</span>
+                    @else
+                        <span class="status warning">{{ ucfirst($item->status) }}</span>
+                    @endif
+                </td>
             </tr>
-
+            @empty
             <tr>
-                <td>2</td>
-                <td>Melisandra</td>
-                <td>Bumi</td>
-                <td>12 Feb 2026</td>
-                <td>17 Feb 2026</td>
-                <td><span class="status warning">Dipinjam</span></td>
+                <td colspan="6" style="color: #999; padding: 20px;">Belum ada data peminjaman.</td>
             </tr>
-
-            <tr>
-                <td>3</td>
-                <td>Herdika Julian</td>
-                <td>Laskar Pelangi</td>
-                <td>05 Feb 2026</td>
-                <td>08 Feb 2026</td>
-                <td><span class="status danger">Terlambat</span></td>
-            </tr>
+            @endforelse
         </tbody>
     </table>
 </div>

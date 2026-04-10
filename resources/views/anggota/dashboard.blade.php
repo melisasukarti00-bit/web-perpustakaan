@@ -1,15 +1,12 @@
-@extends('layout')
+@extends('anggota.layouts')
+
+@section('title', 'Dashboard Anggota')
 
 @section('content')
 
 <style>
-/* DASHBOARD */
-.dashboard {
-  padding: 20px;
-}
-
 .title {
-  color: #4ea8de;
+  color: #000000;
   margin-bottom: 5px;
 }
 
@@ -17,7 +14,6 @@
   margin-bottom: 20px;
 }
 
-/* CARD */
 .cards {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -39,7 +35,6 @@
   margin: 10px 0 0;
 }
 
-/* TABLE */
 .table-box {
   background: white;
   padding: 20px;
@@ -71,7 +66,6 @@ table thead {
 }
 
 .badge {
-  background: #4ea8de;
   color: white;
   padding: 5px 12px;
   border-radius: 20px;
@@ -79,76 +73,91 @@ table thead {
 }
 </style>
 
-<div class="dashboard">
+<h2 class="title">Dashboard</h2>
+<p class="subtitle">Selamat datang kembali, {{ Auth::user()->name }}</p>
 
-  <h2 class="title">Dashboard</h2>
-  <p class="subtitle">Selamat datang kembali, Melisandra</p>
-
-  <!-- CARD -->
-  <div class="cards">
-    <div class="card">
-      <p>Total Peminjaman</p>
-      <h1>5</h1>
-    </div>
-
-    <div class="card">
-      <p>Sedang Dipinjam</p>
-      <h1>2</h1>
-    </div>
-
-    <div class="card">
-      <p>Sudah Dikembalikan</p>
-      <h1>3</h1>
-    </div>
-
-    <div class="card">
-      <p>Total Denda</p>
-      <h1>0</h1>
-    </div>
+{{-- CARD --}}
+<div class="cards">
+  <div class="card">
+    <p>Total Peminjaman</p>
+    <h1>{{ $totalPeminjaman ?? 0 }}</h1>
   </div>
 
-  <!-- TABLE -->
-  <div class="table-box">
-    <h3>Riwayat Peminjaman Terbaru</h3>
-
-    <table>
-      <thead>
-        <tr>
-          <th>No</th>
-          <th>Judul Buku</th>
-          <th>Tanggal Pinjam</th>
-          <th>Jatuh Tempo</th>
-          <th>Tanggal Kembali</th>
-          <th>Denda</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <tr>
-          <td>1</td>
-          <td>Pengetahuan Alam</td>
-          <td>02 Feb 2026</td>
-          <td>04 Feb 2026</td>
-          <td>03 Feb 2026</td>
-          <td>-</td>
-          <td><span class="badge">Sudah Kembali</span></td>
-        </tr>
-
-        <tr>
-          <td>2</td>
-          <td>Si Kancil</td>
-          <td>02 Feb 2026</td>
-          <td>04 Feb 2026</td>
-          <td>03 Feb 2026</td>
-          <td>-</td>
-          <td><span class="badge">Sudah Kembali</span></td>
-        </tr>
-
-      </tbody>
-    </table>
+  <div class="card">
+    <p>Sedang Dipinjam</p>
+    <h1>{{ $sedangDipinjam ?? 0 }}</h1>
   </div>
 
+  <div class="card">
+    <p>Sudah Dikembalikan</p>
+    <h1>{{ $sudahDikembalikan ?? 0 }}</h1>
+  </div>
+
+  <div class="card">
+    <p>Total Denda</p>
+    <h1>Rp {{ number_format($totalDenda ?? 0, 0, ',', '.') }}</h1>
+  </div>
+</div>
+
+{{-- TABLE --}}
+<div class="table-box">
+  <h3>Riwayat Peminjaman Terbaru</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>No</th>
+        <th>Judul Buku</th>
+        <th>Tanggal Pinjam</th>
+        <th>Jatuh Tempo</th>
+        <th>Tanggal Kembali</th>
+        <th>Denda</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @forelse($riwayat as $item)
+      <tr>
+        <td>{{ $loop->iteration }}</td>
+        <td>{{ $item->judul }}</td>
+        <td>{{ \Carbon\Carbon::parse($item->tanggal_pinjam)->format('d M Y') }}</td>
+        <td>{{ \Carbon\Carbon::parse($item->jatuh_tempo)->format('d M Y') }}</td>
+        <td>
+          {{ $item->tanggal_kembali 
+              ? \Carbon\Carbon::parse($item->tanggal_kembali)->format('d M Y') 
+              : '-' }}
+        </td>
+        <td>
+          {{ $item->denda > 0 
+              ? 'Rp ' . number_format($item->denda, 0, ',', '.') 
+              : '-' }}
+        </td>
+        <td>
+          @if($item->status == 'pending')
+            <span class="badge" style="background:gray;">Menunggu</span>
+
+          @elseif($item->status == 'approved' && !$item->tanggal_kembali)
+            <span class="badge" style="background:#f39c12;">Dipinjam</span>
+
+          @elseif($item->status == 'selesai')
+            <span class="badge" style="background:#2ecc71;">Sudah Kembali</span>
+
+          @else
+            <span class="badge" style="background:#999;">-</span>
+          @endif
+        </td>
+      </tr>
+
+      @empty
+      <tr>
+        <td colspan="7" style="text-align:center; color:gray;">
+          Belum ada riwayat peminjaman
+        </td>
+      </tr>
+      @endforelse
+    </tbody>
+  </table>
 </div>
 
 @endsection

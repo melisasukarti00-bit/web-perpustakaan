@@ -9,58 +9,61 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    // 🔹 halaman utama
-    public function index()
-    {
-        return view('welcome');
-    }
+   // 🔹 LOGIN
 
-    // 🔹 halaman login
-    public function showLogin()
-    {
-        return view('auth.login');
-    }
+public function login(Request $request)
+{
+    $credentials = $request->only('email', 'password');
 
-    // 🔹 proses login
-    public function login(Request $request)
-    {
-        $credentials = $request->only('email', 'password');
+    if (Auth::attempt($credentials)) {
 
-        if (Auth::attempt($credentials)) {
-            return redirect('/dashboard');
+        $user = Auth::user();
+
+        // redirect sesuai role
+        if ($user->role == 'anggota') {
+            return redirect('/anggota/dashboard');
         }
 
-        return back()->with('error', 'Email atau password salah');
+        if ($user->role == 'petugas') {
+            return redirect('/petugas/dashboard');
+        }
+
+        if ($user->role == 'kepala') {
+            return redirect('/kepala/dashboard');
+        }
     }
 
-    // 🔹 halaman register
-    public function showRegister()
-    {
-        return view('auth.register');
-    }
+    return back()->with('error', 'Email atau password salah');
+}
 
-    // 🔹 proses register
-    public function register(Request $request)
-    {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6'
-        ]);
+// 🔹 REGISTER
+public function register(Request $request)
+{
+    $request->validate([
+        'name' => 'required',
+        'email' => 'required|email|unique:users,email',
+        'password' => 'required|min:6',
+    ]);
 
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password)
-        ]);
+    $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+        'role' => 'anggota'
+    ]);
 
-        return redirect('/login')->with('success', 'Register berhasil!');
-    }
+    Auth::login($user);
 
-    // 🔹 logout
-    public function logout()
-    {
-        Auth::logout();
-        return redirect('/login');
-    }
+    return redirect()->route('anggota.dashboard');
+}
+
+public function logout(Request $request)
+{
+    Auth::logout();
+
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return redirect('/login');
+}
 }
