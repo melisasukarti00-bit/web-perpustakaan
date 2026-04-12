@@ -6,182 +6,221 @@
     <title>@yield('title') | Melibrary</title>
 
     <style>
-        /* =========================
-           GLOBAL
-        ========================= */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            margin: 0;
-            font-family: 'Arial', sans-serif;
-            background: #eef2f7;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(160deg, #ddeeff 0%, #c8e8ff 50%, #d4eef9 100%);
             display: flex;
-            height: 100vh;
-        }
-        a {
-            text-decoration: none;
+            min-height: 100vh;
         }
 
-        /* =========================
-           SIDEBAR
-        ========================= */
+        a { text-decoration: none; }
+
+        /* ── SIDEBAR ── */
         .sidebar {
-            width: 240px;
+            width: 220px;
             background: #fff;
-            height: 100%;
-            padding: 20px;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
+            border-right: 1px solid #e4eef7;
+            flex-shrink: 0;
+            height: 100vh;
+            position: sticky;
+            top: 0;
         }
-        .logo {
-            font-weight: bold;
-            font-size: 20px;
-            margin-bottom: 25px;
-            color: #4da3ff;
+
+        .sidebar-head {
+            padding: 22px 20px 18px;
+            border-bottom: 1px solid #e4eef7;
         }
-        .profile {
-            text-align: center;
-            margin-bottom: 30px;
+        .sidebar-logo {
+            font-size: 17px; font-weight: 700;
+            display: flex; align-items: center; gap: 8px;
         }
-        .profile img {
-            width: 70px;
-            height: 70px;
+        .sidebar-logo .me  { color: #1a1a1a; }
+        .sidebar-logo .lib { color: #3b9ce2; }
+        .logo-dot {
+            width: 8px; height: 8px;
+            background: #3b9ce2;
             border-radius: 50%;
-            object-fit: cover;
+        }
+
+        .sidebar-profile {
+            padding: 20px;
+            display: flex; flex-direction: column; align-items: center;
+            border-bottom: 1px solid #e4eef7;
+        }
+        .avatar {
+            width: 56px; height: 56px; border-radius: 50%;
+            background: #185FA5;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; font-weight: 700; color: #fff;
             margin-bottom: 10px;
         }
-        .profile h4 {
-            margin: 5px 0;
-            font-size: 16px;
-        }
-        .badge {
-            background: #4da3ff;
-            color: #fff;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
+        .profile-name  { font-size: 14px; font-weight: 700; color: #1a1a1a; margin-bottom: 6px; }
+        .profile-badge {
+            background: #e6f2fb; color: #185FA5;
+            font-size: 11px; font-weight: 700;
+            padding: 3px 12px; border-radius: 20px;
         }
 
-        .menu {
-            flex: 1;
+        .sidebar-menu {
+            flex: 1; padding: 14px 12px;
+            display: flex; flex-direction: column; gap: 4px;
         }
-        .menu a {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 15px;
-            margin: 6px 0;
-            color: #333;
-            border-radius: 8px;
+        .menu-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 12px; border-radius: 10px;
+            font-size: 13px; color: #4a6080;
+            text-decoration: none; font-weight: 500;
             transition: 0.2s;
         }
-        .menu a:hover,
-        .menu a.active {
-            background: #4da3ff;
-            color: #fff;
-            font-weight: bold;
-        }
-        .menu form button {
-            width: 100%;
-            padding: 10px;
-            text-align: left;
-            background: #f44336;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-top: 10px;
-            transition: 0.2s;
-        }
+        .menu-item:hover  { background: #e6f2fb; color: #3b9ce2; }
+        .menu-item.active { background: #3baaf4; color: #fff; }
 
-        /* =========================
-           MAIN
-        ========================= */
-        .main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
+        .menu-logout {
+            margin: 8px 12px 16px;
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 12px; border-radius: 10px;
+            font-size: 13px; font-weight: 500;
+            color: #a32d2d; background: #fff0f0;
+            cursor: pointer; border: none;
+            width: calc(100% - 24px); text-align: left;
+            font-family: Arial; transition: 0.2s;
         }
+        .menu-logout:hover { background: #fde0e0; }
 
-        /* NAVBAR */
+        /* ── MAIN ── */
+        .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
         .navbar {
-            background: linear-gradient(to right, #4da3ff, #3b8eea);
-            color: #fff;
-            padding: 15px 25px;
-            font-weight: bold;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            background: #3baaf4;
+            color: #fff; padding: 0 24px; height: 58px;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 10;
+            box-shadow: 0 2px 8px rgba(59,170,244,0.2);
         }
-        .navbar .right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .navbar img {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            object-fit: cover;
+        .navbar-title   { font-size: 15px; font-weight: 700; }
+        .navbar-right   { display: flex; align-items: center; gap: 12px; }
+        .navbar-greeting { font-size: 13px; opacity: 0.9; }
+        .navbar-avatar  {
+            width: 34px; height: 34px; border-radius: 50%;
+            background: rgba(255,255,255,0.25);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: 700; color: #fff;
         }
 
-        /* CONTENT */
         .container {
-            padding: 25px;
+            padding: 24px;
             overflow-y: auto;
         }
-        .container::-webkit-scrollbar {
-            width: 6px;
-        }
+        .container::-webkit-scrollbar { width: 6px; }
         .container::-webkit-scrollbar-thumb {
-            background: rgba(0,0,0,0.2);
+            background: rgba(0,0,0,0.15);
             border-radius: 3px;
+        }
+
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; }
+            .sidebar-profile, .sidebar-head { display: none; }
+            .sidebar-menu { flex-direction: row; padding: 8px; overflow-x: auto; }
+            .menu-logout { margin: 8px; width: auto; }
         }
     </style>
 </head>
 <body>
 
-    <!-- =========================
-         SIDEBAR
-    ========================= -->
-    <div class="sidebar">
-        <div class="logo">📚 Melibrary</div>
-
-        <div class="profile">
-            <h4>{{ Auth::user()->name ?? 'User' }}</h4>
-            <span class="badge">{{ Auth::user()->role ?? 'Role' }}</span>
-        </div>
-
-        <div class="menu">
-            <a href="{{ route('kepala.dashboard') }}" class="{{ request()->routeIs('kepala.dashboard') ? 'active' : '' }}">🏠 Dashboard</a>
-            <a href="{{ route('kepala.buku') }}" class="{{ request()->routeIs('kepala.buku') ? 'active' : '' }}">📚 Data Buku</a>
-            <a href="{{ route('kepala.petugas.index') }}" class="{{ request()->routeIs('kepala.petugas.index') ? 'active' : '' }}">👨‍💼 Data Petugas</a>
-            <a href="{{ route('kepala.laporan') }}" class="{{ request()->routeIs('kepala.laporan') ? 'active' : '' }}">📊 Laporan</a>
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit">🚪 Logout</button>
-            </form>
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <div class="sidebar-head">
+        <div class="sidebar-logo">
+            <div class="logo-dot"></div>
+            <span><span class="me">me</span><span class="lib">library</span></span>
         </div>
     </div>
 
-    <!-- =========================
-         MAIN AREA
-    ========================= -->
-    <div class="main">
-        <!-- NAVBAR -->
-        <div class="navbar">
-            <div>@yield('title')</div>
-            <div class="right">
-                <span>👋 Hi, {{ Auth::user()->name ?? 'User' }}</span>
+    <div class="sidebar-profile">
+        <div class="avatar">
+            {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
+        </div>
+        <div class="profile-name">{{ Auth::user()->name ?? 'User' }}</div>
+        <div class="profile-badge">{{ Auth::user()->role ?? 'Role' }}</div>
+    </div>
+
+    <div class="sidebar-menu">
+        <a href="{{ route('kepala.dashboard') }}"
+           class="menu-item {{ request()->routeIs('kepala.dashboard') ? 'active' : '' }}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            Dashboard
+        </a>
+
+        <a href="{{ route('kepala.buku') }}"
+           class="menu-item {{ request()->routeIs('kepala.buku') ? 'active' : '' }}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+            Data Buku
+        </a>
+
+        <a href="{{ route('kepala.petugas.index') }}"
+           class="menu-item {{ request()->routeIs('kepala.petugas.index') ? 'active' : '' }}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+            </svg>
+            Data Petugas
+        </a>
+
+        <a href="{{ route('kepala.laporan') }}"
+           class="menu-item {{ request()->routeIs('kepala.laporan') ? 'active' : '' }}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10"/>
+                <line x1="12" y1="20" x2="12" y2="4"/>
+                <line x1="6"  y1="20" x2="6"  y2="14"/>
+            </svg>
+            Laporan
+        </a>
+    </div>
+
+    <form action="{{ route('logout') }}" method="POST">
+        @csrf
+        <button type="submit" class="menu-logout">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            Logout
+        </button>
+    </form>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <div class="navbar-title">@yield('title')</div>
+        <div class="navbar-right">
+            <span class="navbar-greeting">👋 Hi, {{ Auth::user()->name ?? 'User' }}</span>
+            <div class="navbar-avatar">
+                {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
             </div>
         </div>
-
-        <!-- CONTENT -->
-        <div class="container">
-            @yield('content')
-        </div>
     </div>
+
+    <!-- CONTENT -->
+    <div class="container">
+        @yield('content')
+    </div>
+
+</div>
 
 </body>
 </html>

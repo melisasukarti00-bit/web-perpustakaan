@@ -74,7 +74,7 @@ table thead {
 </style>
 
 <h2 class="title">Dashboard</h2>
-<p class="subtitle">Selamat datang kembali, {{ Auth::user()->name }}</p>
+<p class="subtitle">Selamat datang, {{ Auth::user()->name }}</p>
 
 {{-- CARD --}}
 <div class="cards">

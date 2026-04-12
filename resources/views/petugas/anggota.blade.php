@@ -57,6 +57,5 @@ tr:hover {
         @endforelse
     </tbody>
 </table>
-</div>
-
+</div
 @endsection
